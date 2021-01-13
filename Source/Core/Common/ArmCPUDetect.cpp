@@ -8,12 +8,14 @@
 #include <string>
 #include <thread>
 
+#ifndef __APPLE__
 #ifndef _WIN32
 #ifndef __FreeBSD__
 #include <asm/hwcap.h>
 #endif
 #include <sys/auxv.h>
 #include <unistd.h>
+#endif
 #endif
 
 #include <fmt/format.h>
@@ -69,7 +71,17 @@ void CPUInfo::Detect()
   CPU64bit = true;
   Mode64bit = true;
   vendor = CPUVendor::ARM;
+#ifdef __APPLE__
+  num_cores = std::thread::hardware_concurrency();
 
+  // M-series CPUs have all of these
+  bFP = true;
+  bASIMD = true;
+  bAES = true;
+  bSHA1 = true;
+  bSHA2 = true;
+  bCRC32 = true;
+#else
 #ifdef _WIN32
   num_cores = std::thread::hardware_concurrency();
 
@@ -101,6 +113,7 @@ void CPUInfo::Detect()
   bCRC32 = hwcaps & HWCAP_CRC32;
   bSHA1 = hwcaps & HWCAP_SHA1;
   bSHA2 = hwcaps & HWCAP_SHA2;
+#endif
 #endif
 }
 

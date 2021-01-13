@@ -270,7 +270,8 @@ void DolphinAnalytics::MakeBaseBuilder()
   builder.AddData("android-version", s_get_val_func("DEVICE_OS"));
 #elif defined(__APPLE__)
   builder.AddData("os-type", "osx");
-
+//objc_msgSend is only available on x86
+#ifndef _M_ARM_64
   // id processInfo = [NSProcessInfo processInfo]
   id processInfo = reinterpret_cast<id (*)(Class, SEL)>(objc_msgSend)(
       objc_getClass("NSProcessInfo"), sel_getUid("processInfo"));
@@ -291,6 +292,8 @@ void DolphinAnalytics::MakeBaseBuilder()
     builder.AddData("osx-ver-minor", version.minor_version);
     builder.AddData("osx-ver-bugfix", version.patch_version);
   }
+#endif
+
 #elif defined(__linux__)
   builder.AddData("os-type", "linux");
 #elif defined(__FreeBSD__)

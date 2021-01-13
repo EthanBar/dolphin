@@ -40,8 +40,10 @@ VertexLoaderARM64::VertexLoaderARM64(const TVtxDesc& vtx_desc, const VAT& vtx_at
     return;
 
   AllocCodeSpace(4096);
+  Common::JITPageWriteEnableExecuteDisable();
   ClearCodeSpace();
   GenerateVertexLoader();
+  Common::JITPageWriteDisableExecuteEnable();
   WriteProtect();
 }
 
