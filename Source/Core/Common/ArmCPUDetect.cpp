@@ -81,8 +81,7 @@ void CPUInfo::Detect()
   bSHA1 = true;
   bSHA2 = true;
   bCRC32 = true;
-#else
-#ifdef _WIN32
+#elif defined(_WIN32)
   num_cores = std::thread::hardware_concurrency();
 
   // Windows does not provide any mechanism for querying the system registers on ARMv8, unlike Linux
@@ -113,7 +112,6 @@ void CPUInfo::Detect()
   bCRC32 = hwcaps & HWCAP_CRC32;
   bSHA1 = hwcaps & HWCAP_SHA1;
   bSHA2 = hwcaps & HWCAP_SHA2;
-#endif
 #endif
 }
 

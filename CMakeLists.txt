@@ -6,8 +6,12 @@ cmake_minimum_required(VERSION 3.10)
 # Minimum OS X version.
 # This is inserted into the Info.plist as well.
 
-# MacOS prior to 10.14 did not fully support C++17, which is used to
-# handle configuration options and aligned alloc
+# MacOS prior to 10.14 did not support aligned alloc which is used to implement
+# std::unique_ptr in the arm64 STL. x86_64 builds can override this to 10.12.0
+# using -DCMAKE_OSX_DEPLOYMENT_TARGET="10.12.0" without issue. This is done in
+# the universal binary building script to build a binary that runs on 10.12
+# on x86_64 computers, while still containing an arm64 slice.
+
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14.0" CACHE STRING "")
 
 project(dolphin-emu)
