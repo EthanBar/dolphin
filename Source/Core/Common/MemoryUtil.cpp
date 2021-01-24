@@ -109,6 +109,13 @@ void JITPageWriteEnableExecuteDisable()
 void JITPageWriteDisableExecuteEnable()
 {
   JITPageWriteNestCounter()--;
+
+  // Sanity check the NestCounter to identify underflow
+  // This can indicate the calls to JITPageWriteDisableExecuteEnable()
+  // are not matched with previous calls to JITPageWriteEnableExecuteDisable()
+  if (JITPageWriteNestCounter() < 0)
+    PanicAlertFmt("JITPageWriteNestCounter() underflowed");
+
   if (JITPageWriteNestCounter() == 0)
   {
 #if defined(_M_ARM_64) && defined(__APPLE__)

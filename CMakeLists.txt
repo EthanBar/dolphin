@@ -68,8 +68,12 @@ else()
 endif()
 
 if(APPLE)
-  option(OSX_USE_DEFAULT_SEARCH_PATH "Don't prioritize system library paths" OFF)
-  option(SKIP_POSTPROCESS_BUNDLE "Skip postprocessing bundle for redistributability" OFF)
+  option(MACOS_USE_DEFAULT_SEARCH_PATH "Don't prioritize system library paths" OFF)
+  option(SKIP_POSTPROCESS_BUNDLE "Skip postprocessing bundle for redistributability" OFF) 
+  # Enable adhoc code signing by default (otherwise makefile builds on ARM will not work)
+  option(MACOS_CODE_SIGNING "Enable codesigning" ON)
+  set(MACOS_CODE_SIGNING_IDENTITY "-" CACHE STRING "The identity used for codesigning.")
+  set(MACOS_CODE_SIGNING_IDENTITY_UPDATER "-" CACHE STRING "The identity used for codesigning, for the updater.")
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -283,7 +287,7 @@ else()
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-  if(NOT OSX_USE_DEFAULT_SEARCH_PATH)
+  if(NOT MACOS_USE_DEFAULT_SEARCH_PATH)
     # Hack up the path to prioritize the path to built-in OS libraries to
     # increase the chance of not depending on a bunch of copies of them
     # installed by MacPorts, Fink, Homebrew, etc, and ending up copying
