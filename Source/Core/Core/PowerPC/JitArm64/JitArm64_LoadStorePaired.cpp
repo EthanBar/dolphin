@@ -77,13 +77,13 @@ void JitArm64::psq_l(UGeckoInstruction inst)
   }
   else
   {
-    LDR(INDEX_UNSIGNED, scale_reg, PPC_REG, PPCSTATE_OFF(spr[SPR_GQR0 + inst.I]));
+    LDR(IndexType::Unsigned, scale_reg, PPC_REG, PPCSTATE_OFF(spr[SPR_GQR0 + inst.I]));
     UBFM(type_reg, scale_reg, 16, 18);   // Type
     UBFM(scale_reg, scale_reg, 24, 29);  // Scale
 
     MOVP2R(X30, inst.W ? single_load_quantized : paired_load_quantized);
-    LDR(X30, X30, ArithOption(EncodeRegTo64(type_reg), true));
-    BLR(X30);
+    LDR(EncodeRegTo64(type_reg), X30, ArithOption(EncodeRegTo64(type_reg), true));
+    BLR(EncodeRegTo64(type_reg));
 
     VS = fpr.RW(inst.RS, RegType::Single);
     m_float_emit.ORR(EncodeRegToDouble(VS), D0, D0);
@@ -179,7 +179,7 @@ void JitArm64::psq_st(UGeckoInstruction inst)
         m_float_emit.FCVTN(32, D0, VS);
     }
 
-    LDR(INDEX_UNSIGNED, scale_reg, PPC_REG, PPCSTATE_OFF(spr[SPR_GQR0 + inst.I]));
+    LDR(IndexType::Unsigned, scale_reg, PPC_REG, PPCSTATE_OFF(spr[SPR_GQR0 + inst.I]));
     UBFM(type_reg, scale_reg, 0, 2);    // Type
     UBFM(scale_reg, scale_reg, 8, 13);  // Scale
 
